@@ -3,13 +3,13 @@
 ##Requirements:
 - Flask
 - Flask_restful
-- Redis
-- Celery
+- Redis `sudo apt-get install redis-server` , `pip install redis`
+- Celery `pip install celery`
 - AlphaPose
 
 
 ## Running the server
 TODO: Need to update the server to production server
-- Flask - `MAIL='' PASSWORD='' python app.py`
+- Flask - `MAIL= PASSWORD= python app.py`
 - Redis - `redis-server`
-- Celery - `MAIL='' PASSWORD='' celery worker -A app.celery --loglevel=info --concurrency=1`
+- Celery - `MAIL= PASSWORD= celery worker -A app.celery --loglevel=info --concurrency=1`

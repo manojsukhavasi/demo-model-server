@@ -13,7 +13,7 @@ from utils.pose_utils import *
 def current_time():
     return datetime.today().strftime('%Y-%m-%d-%H:%M:%S')
 
-def get_badminton_highlights(url, start_time, duration, sample_fps=3):
+def get_badminton_highlights(url, start_time=None, duration=None, sample_fps=3):
 
     #Temp working directories
     os.system('rm -rf temp')
@@ -177,9 +177,9 @@ if __name__=="__main__":
     parser  = argparse.ArgumentParser()
 
     parser.add_argument('-l', '--url', help='Youtube url')
-    parser.add_argument('-s', '--start_time', help='Start time')
-    parser.add_argument('-d', '--duration', help='Duration')
+    #parser.add_argument('-s', '--start_time', help='Start time')
+    #parser.add_argument('-d', '--duration', help='Duration')
 
     args = parser.parse_args()
-    run_name = get_badminton_highlights(args.url, args.start_time, args.duration)
+    run_name = get_badminton_highlights(args.url)
     print(run_name)
