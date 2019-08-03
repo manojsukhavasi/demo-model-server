@@ -17,8 +17,8 @@ def send_mail(email, video_link):
     msg = MIMEMultipart()
     msg['From']=MY_ADDRESS
     msg['To']=email
-    msg['Subject']="Greensight : Please find the attached processed video link"
-    body = f'Hi,\n\n\n     Please download the processed video at {video_link}'
+    msg['Subject']="Greensight: Please find the attached processed video link"
+    body = f'Hi,\n\n\n    Please download the processed video and top 10 highlight clips at {video_link}\n\n    Please feel free to give feedback/suggestions by replying to this email.'
     msg.attach(MIMEText(body))
 
     s.send_message(msg)
