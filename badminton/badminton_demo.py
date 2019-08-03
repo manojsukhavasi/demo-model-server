@@ -48,6 +48,11 @@ def get_badminton_highlights(url, start_time=None, duration=None, sample_fps=3):
         
     os.system('ffmpeg -i temp/temp_clipped.mp4 -r '+str(sample_fps)+' temp/temp_images/output_%04d.png')
 
+    #####  AUDIO ARRAY EXTRACTION ######
+
+    freq = 4410
+    audio_array = audio_to_array('temp/temp_clipped.mp4',4410)
+
     logging.info(current_time()+':'+'Extracting Poses')
     cwd = os.getcwd()
     os.chdir(f'{cwd}/AlphaPose')
@@ -133,8 +138,10 @@ def get_badminton_highlights(url, start_time=None, duration=None, sample_fps=3):
 
     prev_group=[- 1.0*(sample_fps),- 1.0*(sample_fps)] # amazing hack that i am not going to explain
 
-    for group in groups:
-        
+    applause_meter=[]
+    length_meter=[]
+
+    for group in groups:        
         if len(group)>2*sample_fps:            
             start_frame = group[0]  
             start_frame_adjusted = start_frame - 1.0*(sample_fps) # padding one second before
@@ -148,6 +155,14 @@ def get_badminton_highlights(url, start_time=None, duration=None, sample_fps=3):
             duration = frame_to_timestamp(duration_frames_adjusted, sample_fps)
             os.system('ffmpeg -y -ss '+start_time+' -i temp/temp_best_clipped.mp4 -strict -2 -t '+duration+' temp/temp_clips/out'+str(group[0])+'.mp4')
             f.write("file "+"temp/temp_clips/out"+str(group[0])+".mp4\n")
+
+            ##audio part
+        
+            secs = int(group[-1]/sample_fps)
+            audio_array_next_5_secs = audio_array[freq*secs:freq*(secs+5)]
+            applause_meter_clip = np.std(audio_array_next_5_secs)
+            applause_meter.append((group[0], applause_meter_clip))
+            length_meter.append((group[0], duration_frames))
         
         prev_group=group
         
@@ -155,7 +170,7 @@ def get_badminton_highlights(url, start_time=None, duration=None, sample_fps=3):
 
 
     os.system('ffmpeg -f concat -safe 0 -i clipslist.txt -c copy temp/output.mp4')
-    os.system('ffmpeg -i temp/output.mp4 -strict -2 -filter:v "setpts=0.5*PTS" temp/output_spedup.mp4')
+    #os.system('ffmpeg -i temp/output.mp4 -strict -2 -filter:v "setpts=0.5*PTS" temp/output_spedup.mp4')
     ###########################################################################################################################################
 
 
@@ -164,7 +179,56 @@ def get_badminton_highlights(url, start_time=None, duration=None, sample_fps=3):
     rand=int(time.time())
     os.system('mkdir results/run_'+str(rand))
 
-    #os.system('rm clipslist.txt')
+    ######################################
+    #####  Clips ordered by applause meter
+
+    for i in applause_meter:
+        print(i[0],i[1])
+
+    order = np.argsort([i[1] for i in applause_meter])
+    order_clips = [applause_meter[i][0] for i in order]
+
+    loudest_clip = 'temp/temp_clips/out'+str(order_clips[-1])+'.mp4'
+    os.system('cp '+loudest_clip+' temp/loudest.mp4') 
+
+    f= open("loudlist.txt","w+")
+    os.system('mkdir temp/top_10_clips')
+
+    for i in reversed(order_clips[-10:]):
+        os.system(f'mv temp/temp_clips/out{i}.mp4 temp/top_10_clips/')
+        f.write("file "+"temp/temp_clips/out"+str(i)+".mp4\n")
+        
+    f.close()
+
+    os.system('mkdir temp/output/')
+    os.system('mv temp/output.mp4 temp/output/')
+    os.system('mv temp/top_10_clips/ temp/output/')
+    os.chdir(f'{cwd}/temp')
+    os.system(f'zip -r output.zip output/')
+    os.chdir(cwd)
+    #os.system('ffmpeg -f concat -safe 0 -i loudlist.txt -c copy temp/loudestnpoints.mp4')
+
+    ######################################
+    #####  Clips ordered by length
+
+    # length_order = np.argsort([i[1] for i in length_meter])
+
+    # length_order_clips = [length_meter[i][0] for i in length_order]
+
+
+    # f= open("longestlist.txt","w+")
+
+    # for i in reversed(length_order_clips[-10:]):
+    #     f.write("file "+"temp/temp_clips/out"+str(i)+".mp4\n")
+        
+    # f.close()
+
+    # os.system('ffmpeg -f concat -safe 0 -i longestlist.txt -c copy temp/longestnpoints.mp4')
+
+    log['order_clips'] = order_clips
+    log['applause_meter'] = applause_meter
+    log['length_meter'] = length_meter
+    pickle.dump(log,open('temp/log.p','wb'))
 
     os.system('cp -rf temp/* results/run_'+str(rand))
     print(threshold)

@@ -32,15 +32,15 @@ celery.conf.update(app.config)
 @celery.task
 def process_badminton_video(args):
     id = get_badminton_highlights(args['url'])
-    file_link = f'./results/run_{id}/output.mp4'
-    public_url = copy_to_bucket(f'{id}.mp4', file_link, 'badminton')
+    file_link = f'./results/run_{id}/output.zip'
+    public_url = copy_to_bucket(f'{id}.zip', file_link, 'badminton')
     send_mail(args['email'], public_url)
 
 @celery.task
 def process_tennis_video(args):
     id = get_tennis_highlights(args['url'])
-    file_link = f'./results/run_{id}/output.mp4'
-    public_url = copy_to_bucket(f'{id}.mp4', file_link, 'tennis')
+    file_link = f'./results/run_{id}/output.zip'
+    public_url = copy_to_bucket(f'{id}.zip', file_link, 'tennis')
     send_mail(args['email'], public_url)
 
 
