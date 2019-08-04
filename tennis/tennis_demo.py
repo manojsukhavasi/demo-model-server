@@ -122,9 +122,9 @@ def get_tennis_highlights(url,start_time=None, duration=None, sample_fps=3):
     indices_new=[]
     for i in range(len(indices)-1):
         indices_new.append(indices[i])
-        if (indices[i+1]-indices[i])==2:
-            indices_new.append(indices[i]+1)
-                            
+        if (indices[i+1]-indices[i])>=2 and (indices[i+1]-indices[i])<=2*sample_fps:
+            indices_new.extend(range(indices[i]+1,indices[i+1])) #if there is a <2 second gap in play, we ignore and consider this block as play
+
     indices_new.append(indices[-1])
 
 
@@ -160,7 +160,7 @@ def get_tennis_highlights(url,start_time=None, duration=None, sample_fps=3):
             start_frame_adjusted = max(start_frame_adjusted,prev_group[-1]+1.0*(sample_fps)) #making sure there is no overlap
             
             duration_frames = group[-1]-group[0]
-            duration_frames_adjusted = duration_frames+1.0*(sample_fps) # padding one second after
+            duration_frames_adjusted = duration_frames+2.0*(sample_fps) # padding one second after
             duration_frames_adjusted = min(duration_frames_adjusted, max(res.index)) #making sure output does not overshoot orig video duration
             
             start_time = frame_to_timestamp(start_frame_adjusted, sample_fps)
