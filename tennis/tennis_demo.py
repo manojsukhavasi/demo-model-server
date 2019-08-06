@@ -32,11 +32,11 @@ def get_tennis_highlights(url,start_time=None, duration=None, sample_fps=3):
 
     try:
         os.system('youtube-dl -f 18 '+url+' --output temp/temp.mp4')
-        os.system('youtube-dl -f best '+url+' --output temp/temp_best.mp4')
+        #os.system('youtube-dl -f best '+url+' --output temp/temp_best.mp4')
     except:
         try:
             os.system('youtube-dl -f 134 '+url+' --output temp/temp.mp4')
-            os.system('youtube-dl -f best '+url+' --output temp/temp_best.mp4')
+            #os.system('youtube-dl -f best '+url+' --output temp/temp_best.mp4')
         except:
             logging.error(current_time()+':'+'Unable to download video')
 
@@ -44,10 +44,10 @@ def get_tennis_highlights(url,start_time=None, duration=None, sample_fps=3):
     logging.info(current_time()+':'+'Cutting video between timestamps')
     try:
         os.system('ffmpeg -ss '+start_time+'  -i temp/temp.mp4 -t '+duration+' -c copy temp/temp_clipped.mp4')
-        os.system('ffmpeg -ss '+start_time+'  -i temp/temp_best.mp4 -t '+duration+' -c copy temp/temp_best_clipped.mp4')
+        #os.system('ffmpeg -ss '+start_time+'  -i temp/temp_best.mp4 -t '+duration+' -c copy temp/temp_best_clipped.mp4')
     except:
         os.system('cp temp/temp.mp4 temp/temp_clipped.mp4')
-        os.system('cp temp/temp_best.mp4 temp/temp_best_clipped.mp4')
+        #os.system('cp temp/temp_best.mp4 temp/temp_best_clipped.mp4')
         logging.error(current_time()+':'+'Unable to crop video as specified')
 
     try:
@@ -99,7 +99,7 @@ def get_tennis_highlights(url,start_time=None, duration=None, sample_fps=3):
 
     logging.info(current_time()+':'+'Model Prediction')
     print('Loading Model')
-    clf = pickle.load(open('tennis/models/tennis_pose_play_v1.p','rb'))
+    clf = pickle.load(open('tennis/models/tennis_pose_play_v2.p','rb'))
 
     pred = clf.predict(X_mat)
     pred_proba = clf.predict_proba(X_mat)
@@ -122,7 +122,7 @@ def get_tennis_highlights(url,start_time=None, duration=None, sample_fps=3):
     indices_new=[]
     for i in range(len(indices)-1):
         indices_new.append(indices[i])
-        if (indices[i+1]-indices[i])>=2 and (indices[i+1]-indices[i])<=2*sample_fps:
+        if (indices[i+1]-indices[i])<=2*sample_fps and (indices[i+1]-indices[i])>1:
             indices_new.extend(range(indices[i]+1,indices[i+1])) #if there is a <2 second gap in play, we ignore and consider this block as play
 
     indices_new.append(indices[-1])
