@@ -200,11 +200,11 @@ def get_badminton_highlights(url, start_time=None, duration=None, sample_fps=3):
         
     f.close()
 
-    os.system('mkdir temp/output/')
-    os.system('mv temp/output.mp4 temp/output/')
-    os.system('mv temp/top_10_clips/ temp/output/')
+    #os.system('mkdir temp/output/')
+    #os.system('mv temp/output.mp4 temp/output/')
+    #os.system('mv temp/top_10_clips/ temp/output/')
     os.chdir(f'{cwd}/temp')
-    os.system(f'zip -r output.zip output/')
+    os.system(f'zip -r top10clips.zip top_10_clips/')
     os.chdir(cwd)
     #os.system('ffmpeg -f concat -safe 0 -i loudlist.txt -c copy temp/loudestnpoints.mp4')
 
