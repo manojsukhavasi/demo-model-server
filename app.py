@@ -5,7 +5,7 @@ import numpy as np
 import redis
 from celery import Celery
 
-from utils.send_mail import send_mail
+from utils.send_mail import send_mail, send_confirmation_mail
 from utils.gcp_utils import copy_to_bucket
 
 from badminton.badminton_demo import get_badminton_highlights
@@ -31,6 +31,7 @@ celery.conf.update(app.config)
 
 @celery.task
 def process_badminton_video(args):
+    send_confirmation_mail(args['email'], args['url'])
     id = get_badminton_highlights(args['url'])
     file_link = f'./results/run_{id}/output.mp4'
     zip_link = f'./results/run_{id}/top10clips.zip'
@@ -39,6 +40,7 @@ def process_badminton_video(args):
 
 @celery.task
 def process_tennis_video(args):
+    send_confirmation_mail(args['email'], args['url'])
     id = get_tennis_highlights(args['url'])
     file_link = f'./results/run_{id}/output.mp4'
     zip_link = f'./results/run_{id}/top10clips.zip'
