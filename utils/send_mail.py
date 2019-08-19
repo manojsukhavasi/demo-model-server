@@ -16,13 +16,13 @@ def send_mail(email, video_link, zip_link):
 
     me = MY_ADDRESS
     to = email
-    bcc = "manoj.sukhavasi1@gmail.com, anvesh@greensight.ai"
+    bcc = "manoj@greensight.ai, anvesh@greensight.ai"
     rcpt = bcc.split(',') + [to]
 
     msg = MIMEMultipart()
     msg['To']=email
     msg['Subject']="Greensight: Please find the attached processed video link"
-    body = f'Hi,\n\n\n    Please download the processed video at {video_link} and top 10 highlight clips at {zip_link}\n\n    Please feel free to give feedback/suggestions by replying to this email.'
+    body = f'Hi,\n\n\nPlease download the processed video at {video_link} and top 10 highlight clips at {zip_link}\n\nPlease feel free to give feedback/suggestions by replying to this email.\n\n\nCheers,\nGreensight'
     msg.attach(MIMEText(body))
 
     #s.send_message(msg)
@@ -40,13 +40,13 @@ def send_confirmation_mail(email, video_url):
 
     me = MY_ADDRESS
     to = email
-    bcc = "manoj.sukhavasi1@gmail.com, anvesh@greensight.ai"
+    bcc = "manoj@greensight.ai, anvesh@greensight.ai"
     rcpt = bcc.split(',') + [to]
 
     msg = MIMEMultipart()
     msg['To']=email
     msg['Subject']="Greensight: Confirmation of your demo request"
-    body = f'Hi,\n\n    This is confirmation that we have received your request to generate highlights for the video {video_url}\n\n    Processing time varies but typically takes about 30 mins for 60 mins of footage (It will be worth the wait. Promise! ).\n    Please check your mail again in a short while.'
+    body = f'Hi,\n\nThis is confirmation that we have received your request to generate highlights for the video {video_url}\n\nProcessing time varies but typically takes about 1hr for 1hr of footage (It will be worth the wait. Promise! ).\n\n\nCheers,\nGreensight'
     msg.attach(MIMEText(body))
 
     #s.send_message(msg)
